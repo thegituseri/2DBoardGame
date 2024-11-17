@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square Firing Circle</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const square = {
+            x: 100,
+            y: 100,
+            size: 50
+        };
+
+        let circle = {
+            x: square.x + square.size / 2,
+            y: square.y + square.size / 2,
+            radius: 5,
+            speed: 3,
+            directionX: 1, // Move right initially
+            directionY: 0  // No vertical movement
+        };
+
+        let fired = false;
+
+        function drawSquare() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(square.x, square.y, square.size, square.size);
+        }
+
+        function drawCircle() {
+            if (fired) {
+                ctx.beginPath();
+                ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function updateCirclePosition() {
+            if (fired) {
+                circle.x += circle.speed * circle.directionX;
+                circle.y += circle.speed * circle.directionY;
+
+                // Check if the circle is out of bounds, reset its position if so
+                if (circle.x > canvas.width || circle.x < 0 || circle.y > canvas.height || circle.y < 0) {
+                    fired = false;
+                    resetCirclePosition();
+                }
+            }
+        }
+
+        function resetCirclePosition() {
+            circle.x = square.x + square.size / 2;
+            circle.y = square.y + square.size / 2;
+        }
+
+        function fireCircle() {
+            fired = true;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawSquare();
+            drawCircle();
+            updateCirclePosition();
+
+            requestAnimationFrame(draw);
+        }
+
+        canvas.addEventListener('click', fireCircle);
+
+        draw();
+    </script>
+</body>
+</html>
